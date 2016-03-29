@@ -54,6 +54,15 @@ sudo ./make.sh install
 cd bindings/python
 sudo python3 setup.py install # Ubuntu 14.04+, GDB uses Python3
 
+# Unicorn for pwndbg
+cd ~/tools
+sudo apt-get install libglib2.0-dev
+git clone https://github.com/unicorn-engine/unicorn
+cd unicorn
+sudo ./make.sh install
+cd bindings/python
+sudo python3 setup.py install # Ubuntu 14.04+, GDB uses Python3
+
 # pycparser for pwndbg
 sudo pip3 install pycparser # Use pip3 for Python3
 
