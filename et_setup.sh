@@ -55,6 +55,7 @@ cd bindings/python
 sudo python3 setup.py install # Ubuntu 14.04+, GDB uses Python3
 
 # Unicorn for pwndbg
+cd ~/tools
 sudo apt-get install libglib2.0-dev
 git clone https://github.com/unicorn-engine/unicorn
 cd unicorn
