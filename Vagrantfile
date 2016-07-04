@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
   config.ssh.username = 'vagrant'
   config.ssh.forward_agent = true
 
-  config.vm.synced_folder "~/hack/vagrant/epictreasure", "/home/vagrant/host-share"
+  config.vm.synced_folder "host-share", "/home/vagrant/host-share"
 
   config.vm.provider "virtualbox" do |v, override|
     override.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
