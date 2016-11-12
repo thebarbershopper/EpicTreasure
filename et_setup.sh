@@ -45,8 +45,8 @@ sudo ./make.sh install
 cd bindings/python
 sudo python3 setup.py install # Ubuntu 14.04+, GDB uses Python3
 
-# pycparser for pwndbg
-sudo pip3 install pycparser # Use pip3 for Python3
+# Dependencies for pwndbg
+sudo pip3 install pycparser psutil pyelftools printutils future # Use pip3 for Python3
 
 # Install radare2
 cd ~
@@ -132,7 +132,7 @@ cd dotfiles
 cd $HOMEDIR/tools
 git clone https://github.com/cloudburst/libheap
 cd libheap
-sudo cp libheap.py /usr/lib/python3.4
+sudo python3 setup.py install
 echo "python from libheap import *" >> ~/.gdbinit
 
 # Install GO
