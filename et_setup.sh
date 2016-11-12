@@ -164,3 +164,8 @@ wget https://github.com/nigelsmall/py2neo/archive/py2neo-2.0.7.tar.gz
 tar zxvf py2neo*
 cd py2neo*/
 python setup.py install
+
+# Install angr
+cd $HOMEDIR
+mkvirtualenv angr
+pip install angr
