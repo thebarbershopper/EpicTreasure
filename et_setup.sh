@@ -13,9 +13,9 @@ sudo apt-get -y install foremost
 sudo apt-get -y install ipython
 sudo apt-get -y install silversearcher-ag
 
-# Install Binjitsu
+# Install Pwntools
 sudo apt-get -y install python2.7 python-pip python-dev git
-sudo pip install --upgrade git+https://github.com/binjitsu/binjitsu.git
+sudo pip install --upgrade git+https://github.com/Gallopsled/pwntools.git
 echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
 
 cd $HOMEDIR
