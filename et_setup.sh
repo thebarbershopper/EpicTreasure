@@ -17,7 +17,7 @@ sudo apt-get -y install libssl-dev
 
 # Install Pwntools
 sudo apt-get -y install python2.7 python-pip python-dev git
-sudo pip install --upgrade git+https://github.com/Gallopsled/pwntools.git
+sudo pip install -U git+https://github.com/Gallopsled/pwntools.git
 echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
 
 cd $HOMEDIR
@@ -64,7 +64,7 @@ sudo apt-get -y install squashfs-tools
 # Install Firmware-Mod-Kit
 sudo apt-get -y install git build-essential zlib1g-dev liblzma-dev python-magic
 cd ~/tools
-wget https://firmware-mod-kit.googlecode.com/files/fmk_099.tar.gz
+wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/firmware-mod-kit/fmk_099.tar.gz
 tar xvf fmk_099.tar.gz
 rm fmk_099.tar.gz
 cd fmk_099/src
@@ -149,17 +149,18 @@ git clone https://github.com/jfoote/exploitable
 
 # Install joern
 sudo apt-get -y install ant
+sudo apt-get -y install openjdk-7-jdk
 wget https://github.com/fabsx00/joern/archive/0.3.1.tar.gz
 tar xfzv 0.3.1.tar.gz
 cd joern-0.3.1
 wget http://mlsec.org/joern/lib/lib.tar.gz
 tar xfzv lib.tar.gz
 ant
-alias joern='java -jar $JOERN/bin/joern.jar'
+alias joern="java -jar `pwd`/bin/joern.jar"
 
+sudo pip install virtualenvwrapper
 mkvirtualenv joern
 wget https://github.com/nigelsmall/py2neo/archive/py2neo-2.0.7.tar.gz
 tar zxvf py2neo*
-cd py2neo
+cd py2neo*/
 python setup.py install
-
