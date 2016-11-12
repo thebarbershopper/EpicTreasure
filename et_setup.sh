@@ -12,6 +12,8 @@ sudo apt-get -y install unzip
 sudo apt-get -y install foremost
 sudo apt-get -y install ipython
 sudo apt-get -y install silversearcher-ag
+sudo apt-get -y install libffi-dev
+sudo apt-get -y install libssl-dev
 
 # Install Pwntools
 sudo apt-get -y install python2.7 python-pip python-dev git
@@ -36,7 +38,7 @@ sudo python3 setup.py install # Ubuntu 14.04+, GDB uses Python3
 
 # Unicorn for pwndbg
 cd $HOMEDIR/tools
-sudo apt-get install libglib2.0-dev
+sudo apt-get -y install libglib2.0-dev
 git clone https://github.com/unicorn-engine/unicorn
 cd unicorn
 sudo ./make.sh install
@@ -57,7 +59,7 @@ cd ~
 git clone https://github.com/devttys0/binwalk
 cd binwalk
 sudo python setup.py install
-sudo apt-get install squashfs-tools
+sudo apt-get -y install squashfs-tools
 
 # Install Firmware-Mod-Kit
 sudo apt-get -y install git build-essential zlib1g-dev liblzma-dev python-magic
@@ -146,7 +148,7 @@ cd $HOMEDIR/src
 git clone https://github.com/jfoote/exploitable
 
 # Install joern
-sudo apt-get install ant
+sudo apt-get -y install ant
 wget https://github.com/fabsx00/joern/archive/0.3.1.tar.gz
 tar xfzv 0.3.1.tar.gz
 cd joern-0.3.1
