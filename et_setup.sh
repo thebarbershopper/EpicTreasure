@@ -12,10 +12,12 @@ sudo apt-get -y install unzip
 sudo apt-get -y install foremost
 sudo apt-get -y install ipython
 sudo apt-get -y install silversearcher-ag
+sudo apt-get -y install libffi-dev
+sudo apt-get -y install libssl-dev
 
-# Install Binjitsu
+# Install Pwntools
 sudo apt-get -y install python2.7 python-pip python-dev git
-sudo pip install --upgrade git+https://github.com/binjitsu/binjitsu.git
+sudo pip install -U git+https://github.com/Gallopsled/pwntools.git
 echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
 
 cd $HOMEDIR
@@ -36,15 +38,15 @@ sudo python3 setup.py install # Ubuntu 14.04+, GDB uses Python3
 
 # Unicorn for pwndbg
 cd $HOMEDIR/tools
-sudo apt-get install libglib2.0-dev
+sudo apt-get -y install libglib2.0-dev
 git clone https://github.com/unicorn-engine/unicorn
 cd unicorn
 sudo ./make.sh install
 cd bindings/python
 sudo python3 setup.py install # Ubuntu 14.04+, GDB uses Python3
 
-# pycparser for pwndbg
-sudo pip3 install pycparser # Use pip3 for Python3
+# Dependencies for pwndbg
+sudo pip3 install pycparser psutil pyelftools printutils future # Use pip3 for Python3
 
 # Install radare2
 cd ~
@@ -57,12 +59,12 @@ cd ~
 git clone https://github.com/devttys0/binwalk
 cd binwalk
 sudo python setup.py install
-sudo apt-get install squashfs-tools
+sudo apt-get -y install squashfs-tools
 
 # Install Firmware-Mod-Kit
 sudo apt-get -y install git build-essential zlib1g-dev liblzma-dev python-magic
 cd ~/tools
-wget https://firmware-mod-kit.googlecode.com/files/fmk_099.tar.gz
+wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/firmware-mod-kit/fmk_099.tar.gz
 tar xvf fmk_099.tar.gz
 rm fmk_099.tar.gz
 cd fmk_099/src
@@ -130,7 +132,7 @@ cd dotfiles
 cd $HOMEDIR/tools
 git clone https://github.com/cloudburst/libheap
 cd libheap
-sudo cp libheap.py /usr/lib/python3.4
+sudo python3 setup.py install
 echo "python from libheap import *" >> ~/.gdbinit
 
 # Install GO
@@ -146,18 +148,35 @@ cd $HOMEDIR/src
 git clone https://github.com/jfoote/exploitable
 
 # Install joern
-sudo apt-get install ant
+sudo apt-get -y install ant
+sudo apt-get -y install openjdk-7-jdk
 wget https://github.com/fabsx00/joern/archive/0.3.1.tar.gz
 tar xfzv 0.3.1.tar.gz
 cd joern-0.3.1
 wget http://mlsec.org/joern/lib/lib.tar.gz
 tar xfzv lib.tar.gz
 ant
-alias joern='java -jar $JOERN/bin/joern.jar'
+alias joern="java -jar `pwd`/bin/joern.jar"
 
+sudo pip install virtualenvwrapper
 mkvirtualenv joern
 wget https://github.com/nigelsmall/py2neo/archive/py2neo-2.0.7.tar.gz
 tar zxvf py2neo*
-cd py2neo
+cd py2neo*/
 python setup.py install
 
+# Install angr
+cd $HOMEDIR
+mkvirtualenv angr
+pip install angr
+
+# Install apktool
+cd $HOMEDIR
+sudo apt-get -y install ia32-libs
+wget https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool
+wget https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.2.1.jar
+sudo mv apktool_2.2.1.jar apktool.jar
+sudo mv apktool.jar /usr/local/bin
+sudo mv apktool /usr/local/bin
+sudo chmod +x /usr/local/bin/apktool
+sudo chmod +x /usr/local/bin/apktool.jar
