@@ -169,3 +169,14 @@ python setup.py install
 cd $HOMEDIR
 mkvirtualenv angr
 pip install angr
+
+# Install apktool
+cd $HOMEDIR
+sudo apt-get -y install ia32-libs
+wget https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool
+wget https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.2.1.jar
+sudo mv apktool_2.2.1.jar apktool.jar
+sudo mv apktool.jar /usr/local/bin
+sudo mv apktool /usr/local/bin
+sudo chmod +x /usr/local/bin/apktool
+sudo chmod +x /usr/local/bin/apktool.jar
