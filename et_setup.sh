@@ -175,7 +175,7 @@ tar zxvf 0.3.1.tar.gz
 )
 
 
-sudo pip install virtualenvwrapper
+sudo pip install virtualenvwrapper requests
 . /usr/local/bin/virtualenvwrapper.sh
 
 mkvirtualenv joern
