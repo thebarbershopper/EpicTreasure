@@ -184,14 +184,14 @@ tar zxvf py2neo-2.0.7.tar.gz
 sudo rm py2neo-2.0.7.tar.gz
 (
   cd  py2neo-py2neo-2.0.7
-  sudo python setup.py install
+  python setup.py install
 )
 sudo rm -rf py2neo-py2neo-2.0.7/
 
 # Install angr
 cd $HOMEDIR
 mkvirtualenv angr
-sudo pip install angr
+pip install angr
 
 # Install apktool
 cd $HOMEDIR
