@@ -1,2 +1,3 @@
 host-share/*
 !host-share/.gitkeep
+.vagrant/

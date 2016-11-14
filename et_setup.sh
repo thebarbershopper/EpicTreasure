@@ -1,174 +1,197 @@
 #!/bin/bash
 
 HOMEDIR=/home/vagrant
+NPROC=`grep -c '^processor' /proc/cpuinfo`
 
 # Updates
 sudo apt-get -y update
 
-sudo apt-get -y install python3-pip
-sudo apt-get -y install tmux
-sudo apt-get -y install gdb gdb-multiarch
-sudo apt-get -y install unzip
-sudo apt-get -y install foremost
-sudo apt-get -y install ipython
-sudo apt-get -y install silversearcher-ag
-sudo apt-get -y install libffi-dev
-sudo apt-get -y install libssl-dev
+# Install base dependencies
+sudo apt-get -y install python3-pip tmux gdb gdb-multiarch unzip foremost ipython silversearcher-ag libffi-dev libssl-dev
+
+# Create tools folder
+cd $HOMEDIR
+mkdir tools
+cd tools
+
 
 # Install Pwntools
 sudo apt-get -y install python2.7 python-pip python-dev git
 sudo pip install -U git+https://github.com/Gallopsled/pwntools.git
 echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
 
-cd $HOMEDIR
-mkdir tools
-cd tools
 
 # Install pwndbg
-git clone https://github.com/zachriggle/pwndbg
-echo source `pwd`/pwndbg/gdbinit.py >> ~/.gdbinit
+git clone https://github.com/pwndbg/pwndbg
+(
+  cd pwndbg
+  sudo ./setup.sh
+)
+sudo rm -rf pwndbg
 
-# Capstone for pwndbg
-git clone https://github.com/aquynh/capstone
-cd capstone
-git checkout -t origin/next
-sudo ./make.sh install
-cd bindings/python
-sudo python3 setup.py install # Ubuntu 14.04+, GDB uses Python3
-
-# Unicorn for pwndbg
-cd $HOMEDIR/tools
-sudo apt-get -y install libglib2.0-dev
-git clone https://github.com/unicorn-engine/unicorn
-cd unicorn
-sudo ./make.sh install
-cd bindings/python
-sudo python3 setup.py install # Ubuntu 14.04+, GDB uses Python3
-
-# Dependencies for pwndbg
-sudo pip3 install pycparser psutil pyelftools printutils future # Use pip3 for Python3
 
 # Install radare2
-cd ~
 git clone https://github.com/radare/radare2
-cd radare2
-./sys/install.sh
+(
+  cd radare2
+  sudo ./sys/install.sh
+)
+sudo rm -rf radare2
+
 
 # Install binwalk
-cd ~
-git clone https://github.com/devttys0/binwalk
-cd binwalk
-sudo python setup.py install
 sudo apt-get -y install squashfs-tools
+git clone https://github.com/devttys0/binwalk
+(
+  cd binwalk
+  sudo python setup.py install
+)
+sudo rm -rf binwalk
+
 
 # Install Firmware-Mod-Kit
 sudo apt-get -y install git build-essential zlib1g-dev liblzma-dev python-magic
-cd ~/tools
 wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/firmware-mod-kit/fmk_099.tar.gz
 tar xvf fmk_099.tar.gz
 rm fmk_099.tar.gz
-cd fmk_099/src
-./configure
-make
-
-# Uninstall capstone
-sudo pip2 uninstall capstone -y
-
-# Install correct capstone
-cd ~/tools/capstone/bindings/python
-sudo python setup.py install
+(
+  cd fmk/src
+  ./configure
+  make -j $NPROC
+)
 
 # Install american-fuzzy-lop
-sudo apt-get -y install clang llvm
 cd $HOMEDIR/tools
-wget --quiet http://lcamtuf.coredump.cx/afl/releases/afl-latest.tgz
-tar -xzvf afl-latest.tgz
+sudo apt-get -y install clang llvm
+wget http://lcamtuf.coredump.cx/afl/releases/afl-latest.tgz
+tar zxvf afl-latest.tgz
 rm afl-latest.tgz
-wget --quiet http://llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-xz -d clang*
-tar xvf clang*
-cd clang*
-cd bin
-export PATH=$PWD:$PATH
-cd ../..
+wget http://llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+tar xJvf clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+sudo rm sudo rm clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+(
+  cd clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04/bin
+  export PATH=$PWD:$PATH
+)
+
 (
   cd afl-*
-  make
+  make -j $NPROC
   # build clang-fast
   (
     cd llvm_mode
-    make
+    make -j $NPROC
   )
-  sudo make install
 
   # build qemu-support
-  sudo apt-get -y install libtool automake bison libglib2.0-dev
-  ./build_qemu_support.sh
+  (
+    cd qemu_mode
+    sudo apt-get -y install libtool automake bison libglib2.0-dev
+    ./build_qemu_support.sh
+  )
+
+  sudo make install
 )
+sudo rm -rf clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04
+sudo rm -rf afl-*
 
 # Install 32 bit libs
 sudo dpkg --add-architecture i386
-sudo apt-get update
-sudo apt-get -y install libc6:i386 libncurses5:i386 libstdc++6:i386
-sudo apt-get -y install libc6-dev-i386
+sudo apt-get -y update
+sudo apt-get -y install libc6:i386 libncurses5:i386 libstdc++6:i386 libc6-dev-i386
 
 # Install r2pipe
 sudo pip install r2pipe
 
 # Install ROPGadget
 git clone https://github.com/JonathanSalwan/ROPgadget
-cd ROPgadget
-sudo python setup.py install
+(
+  cd ROPgadget
+  sudo pip install capstone
+  sudo python setup.py install
+)
+sudo rm -rf ROPgadget
+
 
 # Personal config
-sudo sudo apt-get -y install stow
 cd $HOMEDIR
+sudo apt-get -y install stow
 rm .bashrc
 git clone https://github.com/ctfhacker/dotfiles
-cd dotfiles
-./install.sh
+(
+  cd dotfiles
+  ./install.sh
+)
 
 # Install libheap in GDB
 cd $HOMEDIR/tools
 git clone https://github.com/cloudburst/libheap
-cd libheap
-sudo python3 setup.py install
-echo "python from libheap import *" >> ~/.gdbinit
+(
+  cd libheap
+  sudo python3 setup.py install
+  echo "python from libheap import *" | sudo tee -a ~/.gdbinit
+)
+sudo rm -rf libheap
 
 # Install GO
 cd $HOMEDIR
-wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz
-tar zxvf go1.*
+wget https://storage.googleapis.com/golang/go1.7.3.linux-amd64.tar.gz
+tar zxvf go1.7.3.linux-amd64.tar.gz
+sudo rm go1.7.3.linux-amd64.tar.gz
 mkdir $HOMEDIR/.go
+export GOPATH=$HOME/.go
+export GOROOT=$HOME/go
+export PATH=$PATH:$GOROOT/bin
 
 # Install crashwalk
 go get -u github.com/arizvisa/crashwalk/cmd/...
+
+
+# Make src dir
 mkdir $HOMEDIR/src
 cd $HOMEDIR/src
+
+# Install exploitable
 git clone https://github.com/jfoote/exploitable
+(
+  cd exploitable
+  sudo python setup.py install
+)
+sudo rm -rf exploitable
 
 # Install joern
-sudo apt-get -y install ant
-sudo apt-get -y install openjdk-7-jdk
+sudo apt-get -y install ant openjdk-7-jdk
 wget https://github.com/fabsx00/joern/archive/0.3.1.tar.gz
-tar xfzv 0.3.1.tar.gz
-cd joern-0.3.1
-wget http://mlsec.org/joern/lib/lib.tar.gz
-tar xfzv lib.tar.gz
-ant
-alias joern="java -jar `pwd`/bin/joern.jar"
+tar zxvf 0.3.1.tar.gz
+(
+  cd joern-0.3.1
+  
+  wget http://mlsec.org/joern/lib/lib.tar.gz
+  tar zxvf lib.tar.gz
+  rm lib.tar.gz
+
+  ant
+  echo "alias joern='java -jar $PWD/bin/joern.jar'" >> $HOMEDIR/.bashrc
+)
+
 
 sudo pip install virtualenvwrapper
+. /usr/local/bin/virtualenvwrapper.sh
+
 mkvirtualenv joern
 wget https://github.com/nigelsmall/py2neo/archive/py2neo-2.0.7.tar.gz
-tar zxvf py2neo*
-cd py2neo*/
-python setup.py install
+tar zxvf py2neo-2.0.7.tar.gz
+sudo rm py2neo-2.0.7.tar.gz
+(
+  cd  py2neo-py2neo-2.0.7
+  sudo python setup.py install
+)
+sudo rm -rf py2neo-py2neo-2.0.7/
 
 # Install angr
 cd $HOMEDIR
 mkvirtualenv angr
-pip install angr
+sudo pip install angr
 
 # Install apktool
 cd $HOMEDIR
@@ -180,3 +203,7 @@ sudo mv apktool.jar /usr/local/bin
 sudo mv apktool /usr/local/bin
 sudo chmod +x /usr/local/bin/apktool
 sudo chmod +x /usr/local/bin/apktool.jar
+
+# Install decompile
+sudo mv decompile /usr/bin/decompile
+sudo chmod +x /usr/bin/decompile
