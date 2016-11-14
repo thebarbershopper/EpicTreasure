@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
-  config.vm.provision "file", source: "docker/decompile", destination: "/home/vagrant/decommpile"
+  config.vm.provision "file", source: "docker/decompile", destination: "/home/vagrant/decompile"
   config.vm.provision :shell, :path => "et_setup.sh", :privileged => false
 
   config.ssh.username = "vagrant"
