@@ -27,7 +27,6 @@ git clone https://github.com/pwndbg/pwndbg
   cd pwndbg
   sudo ./setup.sh
 )
-sudo rm -rf pwndbg
 
 
 # Install radare2
