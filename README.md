@@ -1,7 +1,7 @@
 # EpicTreasure - Batteries included CTF VM
 
 ## Tools included
-* [Binjitsu](https://github.com/binjitsu/binjitsu)
+* [Pwntools](https://github.com/Gallopsled/pwntools)
 * [Pwndbg](https://github.com/zachriggle/pwndbg)
 * [Radare2](https://github.com/radare/radare2)
 * [Firmware tools (fmk / qemu)](http://reverseengineering.stackexchange.com/questions/8829/cross-debugging-for-mips-elf-with-qemu-toolchain)
@@ -42,12 +42,14 @@ By default, [my dotfiles](http://github.com/ctfhacker/dotfiles) are installed on
 
 ```
 # Personal config
-sudo sudo apt-get -y install stow
-cd /home/vagrant
+cd $HOMEDIR
+sudo apt-get -y install stow
 rm .bashrc
-git clone https://github.com/thebarbershopper/dotfiles
-cd dotfiles
-./install.sh
+git clone https://github.com/ctfhacker/dotfiles
+(
+  cd dotfiles
+  ./install.sh
+)
 ```
 
 #### Terminal
@@ -96,7 +98,7 @@ Expected output:
 [0x00404890]> aaa
 ```
 
-### Binjitsu
+### Pwntools
 
 Run the following command in the VM:
 ```
