@@ -3,12 +3,18 @@
 # Based on Ubuntu
 ############################################################
 
-FROM ubuntu:19.04
+FROM ubuntu:20.04
 ENV test false
 MAINTAINER Maintainer Cory Duplantis
 
+# Set up locale. Required for `tzdata`
+RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+
+# Update and unminimize. Docker installs a minimal version of Ubuntu 20.04
 RUN apt update && \
-    apt -y install locales
+    yes | unminimize
+
+RUN apt -y install locales
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -18,22 +24,23 @@ ENV LC_ALL en_US.UTF-8
 RUN mkdir -p /root/tools
 
 RUN apt update && \
-    apt -y install python-dev python-pip && \
-    apt -y install python3-dev python3-pip && \
+    apt -y install man manpages-posix python3-dev python3-pip && \
     apt clean
 
 RUN apt update && \
     apt install --no-install-recommends -y build-essential curl gdb \
     gdb-multiarch gdbserver git \
     libncursesw5-dev python3-setuptools python-setuptools \
-    python2.7 python3-pip tmux tree stow virtualenvwrapper \
+    tmux tree stow virtualenvwrapper \
     wget vim unzip \
     libjpeg8 libjpeg62-dev libfreetype6 libfreetype6-dev \
     squashfs-tools zlib1g-dev liblzma-dev python-magic cmake \
-    z3 python-lzma net-tools strace ltrace \
+    z3 net-tools strace ltrace \
     gcc-multilib g++-multilib ruby-full binutils-mips-linux-gnu sudo
 
-
+# Symlink `python3` and `pip3`
+RUN ln -fs /usr/bin/python3 /usr/bin/python && \
+    ln -fs /usr/bin/pip3 /usr/bin/pip
 
 # Personal dotfiles
 RUN cd /root && \
@@ -43,21 +50,17 @@ RUN cd /root && \
     ./install.sh
 
 # Upgrade pip and ipython
-RUN python -m pip install --upgrade pip && \
-    python3 -m pip install --upgrade pip && \
-    pip2 install -Iv ipython==5.3.0  && \
+RUN python3 -m pip install --upgrade pip && \
     pip3 install ipython
 
 # Install radare
 RUN git clone --depth 1 https://github.com/radare/radare2 && \
     cd radare2 && \
     ./sys/install.sh && \
-    make install && \
-    pip2 install r2pipe && \
     pip3 install r2pipe
 
 # Install pwntools and pwndbg
-RUN pip2 install git+https://github.com/Gallopsled/pwntools && \
+RUN pip3 install git+https://github.com/Gallopsled/pwntools && \
     cd /root/tools && \
     git clone --depth 1 https://github.com/pwndbg/pwndbg && \
     cd pwndbg && \
@@ -80,16 +83,16 @@ RUN apt update && \
     chmod 755 /bin/apktool.jar
 
 # Install PIL
-RUN pip install Pillow
+RUN pip3 install Pillow
 
 # Install frida and the frida tools
-RUN pip install frida frida-tools
+RUN pip3 install frida frida-tools
 
 # Install ROPgadget
 RUN cd /root/tools && \
     git clone --depth 1 https://github.com/JonathanSalwan/ROPgadget.git && \
     cd ROPgadget && \
-    python setup.py install
+    python3 setup.py install
 
 # Install fzf
 RUN cd /root/tools && \
@@ -203,7 +206,7 @@ Run apt update && \
 RUN cd /root/tools && \
     git clone --depth 1 https://github.com/ReFirmLabs/binwalk && \
     cd binwalk && \
-    python setup.py install
+    python3 setup.py install
 
 # Install fmk
 # RUN cd /root/tools && \
@@ -227,7 +230,7 @@ RUN wget -O ~/.gdbinit-gef-extras.sh -q https://github.com/hugsy/gef/raw/master/
     ~/.gdbinit-gef-extras.sh
 
 # Install go
-RUN wget https://dl.google.com/go/go1.12.6.linux-amd64.tar.gz && \
+RUN wget https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz && \
     tar -C /usr/local -xzf go*tar.gz
 
 COPY .tmux.conf /root/.tmux.conf
